@@ -1,8 +1,8 @@
-# Group Project - Redis and SQLite
+# Group Project - Redis and SQLite Comparison
 
 ## Installation with Docker
 
-First, install docker in your Operating System. You can follow the instructions in the following link: https://docs.docker.com/get-docker/
+First, install the [Docker engine](https://docs.docker.com/engine/install/) in your Operating System. 
 
 Then, proceed with the following steps:
 
@@ -10,20 +10,48 @@ Then, proceed with the following steps:
 ```
 git clone nmsu-cs582-db2-group-project
 ```
-2. Build Redis image
+2. Build Redis image (check you have Docker running first in your machine)
 ```
-docker build -t redis-server .
+cd docker-redis-sqlite
+docker build -t redis-sqlite-python .
 ```
-3. Run Redis container mounting the data shared folder:
+3. Run Redis (without persistance) container mounting the data shared folder:
 ```
-docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest -v /mnt/nmsu-cs582-db2-group-project/project:/mnt/project:rw
-```
-4. Previously installing redis-cli in your Operating system, go to console and run the following command:
-```
-redis & PING
-```
-5. You should see the following output: PONG
+docker run -d \
+  --name redis-sqlite-container \
+  -p 6379:6379 \
+  -p 8001:8001 \
+  -v /Users/israelgonzalez/Documents/Development/nmsu/nmsu-cs582-db2-group-project/project:/mnt \
+  redis-sqlite-python redis-server --appendonly no
 
-Useful information in: 
+```
+4. Now, we will check Redis is answering correcty making a Redis PING:
+(Note: Previously make sure you have installed redis-cli in your machine, and then go to your console and run the following command)
+```
+redis-cli -h 127.0.0.1 -p 6379 ping
+```
+You should see the following output: 
+```
+PONG
+```
+5. Now, we will check that SQLite is answering correctly:
+```
+docker exec -it redis-sqlite-container python3 /mnt/python/install/test-sqlite.py
+```
+You should see:
+```
+(1, 'SQLite is well!')
+```
+If SQLite answers correctly
+
+Important: For the following steps make sure you put manually the files of the Sakila database in folder "data":
+
+6. Now, we will see we install the Sakila database in SQLite:
+
+7. Now, we will see we install the Sakila database in Redis:
+
+
+
+This has been built with help of ChatGpt and minor adaptations. You can check the thread here: 
   
 https://chatgpt.com/share/67244d75-9498-8004-9b31-6ca261d83adc
