@@ -48,10 +48,11 @@ If SQLite answers correctly
 
 Important: For the following steps make sure you put manually the files of the Sakila database in folder "data":
 
-6. Now, we will install the Sakila database in SQLite:
+6. Now, we will install the Sakila database in SQLite and in Redis by executing:
 
-7. Now, we will install the Sakila database in Redis:
-
+```
+docker exec -it redis-sqlite-container python3 /mnt/python/install/install-sakila.py
+```
 
 
 This has been built with help of ChatGpt and minor adaptations. You can check the thread here: 
