@@ -48,9 +48,9 @@ If SQLite answers correctly
 
 Important: For the following steps make sure you put manually the files of the Sakila database in folder "data":
 
-6. Now, we will see we install the Sakila database in SQLite:
+6. Now, we will install the Sakila database in SQLite:
 
-7. Now, we will see we install the Sakila database in Redis:
+7. Now, we will install the Sakila database in Redis:
 
 
 
