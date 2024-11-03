@@ -21,7 +21,4 @@ EXPOSE 6379
 # Expose SQLite port (optional)
 EXPOSE 8001
 
-# Disable Redis persistence
-# RUN sed -i 's/appendonly yes/appendonly no/' /etc/redis/redis.conf
-
 CMD []
