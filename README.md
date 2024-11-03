@@ -25,6 +25,9 @@ docker run -d \
   redis-sqlite-python redis-server --appendonly no
 
 ```
+
+You must replace "/Users/israelgonzalez/Documents/Development/nmsu/nmsu-cs582-db2-group-project/project" with your own path in your machine according you cloned the repo and have the "project" folder.
+
 4. Now, we will check Redis is answering correcty making a Redis PING:
 (Note: Previously make sure you have installed redis-cli in your machine, and then go to your console and run the following command)
 ```
