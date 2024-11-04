@@ -1,1 +1,52 @@
 Here we put the Sakila database and auxiliary data if it's needed.
+
+
+Setup
+The project uses the Sakila dataset, stored in two formats:
+
+SQLite: sakila.db database file.
+Redis: dump.rdb file containing the Sakila dataset in Redis format.
+Both files are located in the project/data directory and will be mounted into Docker.
+
+Running the Docker Container
+Build the Docker Image
+
+1. In the project directory, run the following command to build the Docker image:
+
+docker build -t redis-sqlite-python .
+
+
+Run the Docker Container
+
+2. Run the Docker container with both Redis and SQLite services:
+docker run -d --name redis-sqlite-container -p 6379:6379 -p 8001:8001 \
+    -v "path/to/project/data/dump.rdb:/data/dump.rdb" \
+    -v "path/to/project/data/sakila.db:/data/sakila.db" \
+    redis-sqlite-python redis-server --dir /data --dbfilename dump.rdb --appendonly no
+
+Replace "path/to/project/data/" with the actual path to the data directory on your machine.
+
+
+Verifying Data Import
+Once the container is running, you can verify that both Redis and SQLite are correctly set up.
+
+1. Redis:
+Enter the Redis CLI within the container:
+docker exec -it redis-sqlite-container redis-cli
+
+Check for keys in Redis to verify data import:
+KEYS *
+
+You should see keys related to the Sakila dataset, such as actor, film, etc.
+
+2. SQLite:
+Open an interactive SQLite session within the container:
+docker exec -it redis-sqlite-container sqlite3 /data/sakila.db
+
+Check the tables in SQLite:
+.tables
+
+You should see tables such as actor, film, customer, etc.
+
+
+
