@@ -15,6 +15,9 @@ RUN pip3 install redis
 RUN pip3 install pandas
 RUN pip3 install plotly
 
+# Install sqlparse library
+RUN pip3 install sqlparse
+
 # Expose Redis port
 EXPOSE 6379
 
