@@ -22,8 +22,7 @@ docker run -d \
   -p 6379:6379 \
   -p 8001:8001 \
   -v /Users/israelgonzalez/Documents/Development/nmsu/nmsu-cs582-db2-group-project/project:/mnt \
-  --dir /mnt/data --dbfilename dump.rdb \
-  redis-sqlite-python redis-server --appendonly no
+  redis-sqlite-python redis-server --appendonly no --dir /mnt/data --dbfilename dump.rdb
 
 ```
 
