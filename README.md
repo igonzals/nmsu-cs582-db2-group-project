@@ -22,7 +22,7 @@ docker run -d \
   -p 6379:6379 \
   -p 8001:8001 \
   -v /Users/israelgonzalez/Documents/Development/nmsu/nmsu-cs582-db2-group-project/project:/mnt \
-  redis-sqlite-python redis-server --appendonly no --dir /mnt/data --dbfilename dump.rdb --loadmodule /usr/lib/redis/modules/redisearch.so
+  redis-sqlite-python redis-server --dir /mnt/data --dbfilename dump.rdb --protected-mode no --appendonly no --loadmodule /opt/redis-stack/lib/redisearch.so
 
 ```
 
