@@ -47,7 +47,4 @@ print("Redis vs SQLite")
 print("Equi queries by key")
 print("===================\n")
 
-queries_by_key(100)
-queries_by_key(1000)
 queries_by_key(10000)
-queries_by_key(100000)
