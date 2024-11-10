@@ -91,7 +91,7 @@ sqlite_times = [time_sqlite_query() for _ in range(5)]
 avg_sqlite_time = sum(sqlite_times) / len(sqlite_times)
 for duration in sqlite_times:
     with open("../data/runtimes.tsv", "a") as f:
-        f.write(f"{execution_group_time}\tRange-query\SQLite\t{duration}\n")
+        f.write(f"{execution_group_time}\tRange-query\tSQLite\t{duration}\n")
 
 # Display the results
 print(f"Average Redis Query Time: {avg_redis_time:.5f} seconds")
