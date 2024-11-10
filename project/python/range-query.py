@@ -55,13 +55,22 @@ def time_sqlite_query():
     # print(end_time - start_time)
     return end_time - start_time
 
+# Get execution time in format yyyy-mmm-dd hh:mm:ss
+execution_group_time = time.strftime("%Y-%b-%d %H:%M:%S")
+
 # Run Redis query 5 times and calculate the average time
 redis_times = [time_redis_query() for _ in range(5)]
 avg_redis_time = sum(redis_times) / len(redis_times)
+for duration in redis_times:
+    with open("../data/runtimes.tsv", "a") as f:
+        f.write(f"{execution_group_time}\tRange-query\tRedis\t{duration}\n")
 
 # Run SQLite query 5 times and calculate the average time
 sqlite_times = [time_sqlite_query() for _ in range(5)]
 avg_sqlite_time = sum(sqlite_times) / len(sqlite_times)
+for duration in sqlite_times:
+    with open("../data/runtimes.tsv", "a") as f:
+        f.write(f"{execution_group_time}\tRange-query\SQLite\t{duration}\n")
 
 # Display the results
 print(f"Average Redis Query Time: {avg_redis_time:.5f} seconds")

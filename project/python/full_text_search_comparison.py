@@ -43,12 +43,18 @@ def sqlite_full_text_search(query_text):
     return cursor.fetchall()
 
 # Function to run queries multiple times and calculate average time
-def measure_query_time(query_function, query_text, num_iterations):
+def measure_query_time(system, query_function, query_text, num_iterations):
+    # Get execution time in format yyyy-mmm-dd hh:mm:ss
+    execution_group_time = time.strftime("%Y-%b-%d %H:%M:%S")
+    
     runtimes = []
     for _ in range(num_iterations):
         start_time = time.time()
         query_function(query_text)
-        runtimes.append(time.time() - start_time)
+        duration = time.time() - start_time
+        with open("../data/runtimes.tsv", "a") as f:
+            f.write(f"{execution_group_time}\tTextSearch\t{system}\t{duration}\n")
+        runtimes.append(duration)
     return sum(runtimes) / len(runtimes)
 
 # Test query time with increasing query counts 1 to 10000
@@ -57,8 +63,8 @@ query_counts = [1, 10, 100, 1000, 10000]
 print("Testing Redis and SQLite query times with increasing iteration counts:\n")
 
 for count in query_counts:
-    redis_time = measure_query_time(redis_full_text_search, query_text, count)
-    sqlite_time = measure_query_time(sqlite_full_text_search, query_text, count)
+    redis_time = measure_query_time("Redis", redis_full_text_search, query_text, count)
+    sqlite_time = measure_query_time("SQLite", sqlite_full_text_search, query_text, count)
     print(f"For {count} queries:")
     print(f"  Redis Average Query Time: {redis_time:.5f} seconds")
     print(f"  SQLite Average Query Time: {sqlite_time:.5f} seconds\n")
