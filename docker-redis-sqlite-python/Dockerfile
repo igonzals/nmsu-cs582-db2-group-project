@@ -1,5 +1,6 @@
 FROM redis/redis-stack-server:latest
 
+
 # Install SQLite
 RUN apt-get update && apt-get install -y sqlite3 wget
 
@@ -15,20 +16,17 @@ RUN pip3 install sqlparse
 # Install MariaDB and dependencies
 RUN apt-get install -y mariadb-server mariadb-client
 
-# Expose Redis port
-EXPOSE 6379
+# Expose ports
+EXPOSE 6379   
+EXPOSE 8001   
+EXPOSE 3307   
 
-# Expose SQLite port (optional)
-EXPOSE 8001
-
-# Expose MariaDB port 3307
-EXPOSE 3307
-
-# Specify root password for MariaDB
+# Set root password for MariaDB
 ENV MYSQL_ROOT_PASSWORD=root
 
 # Start Redis and MariaDB services
-CMD service mariadb start && redis-server
+CMD ["redis-server", "--loadmodule", "/opt/redis-stack/lib/redisearch.so", "--loadmodule", "/opt/redis-stack/lib/redistimeseries.so", "--loadmodule", "/opt/redis-stack/lib/rejson.so", "--loadmodule", "/opt/redis-stack/lib/redisbloom.so"]
+
 
 # How to use this Dockerfile (uncomment the following lines)
 
