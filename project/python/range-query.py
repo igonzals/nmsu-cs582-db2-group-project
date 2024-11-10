@@ -2,6 +2,8 @@ import redis
 import sqlite3
 import time
 from redis.commands.search.query import Query
+from redis.commands.search.field import NumericField
+from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 
 # Path to the SQLite database file
 db_path = "/mnt/data/sakila.db"
@@ -26,9 +28,28 @@ AND staff_id = 1;
 
 # Function to execute the Redis query and measure time
 def time_redis_query():
-    # Establish the Redis connection once
-    r = redis.StrictRedis(host='localhost', port=6379)
     
+    # Connect to Redis
+    r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+
+    # Create index if it doesn't exist
+    try:
+        r.ft("rentalIndex").create_index(
+            [
+                NumericField("rental_id"),
+                NumericField("inventory_id"),
+                NumericField("customer_id"),
+                NumericField("staff_id")
+            ],
+            definition=IndexDefinition(prefix=["rental:"], index_type=IndexType.HASH)
+        )
+    except redis.exceptions.ResponseError as e:
+        if "Index already exists" in str(e):
+            print("Index already exists")
+        else:
+            print(f"An error occurred: {e}")
+            exit()
+
     # Measure only the query execution time
     start_time = time.time()
     query = Query(redis_query).return_fields("customer_id")
