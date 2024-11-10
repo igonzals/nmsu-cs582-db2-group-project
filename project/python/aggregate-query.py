@@ -3,17 +3,42 @@ import sqlite3
 import time
 from functools import reduce
 
+from redis.commands.search.field import NumericField
+import redis.commands.search.reducers as reducers
+import redis.commands.search.aggregation as aggregations
 
-def aggregate_query (num_queries):
+
+def redis_indexed_aggregate_query(num_queries):
+  r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+  try:
+    r.ft("paymentindex").create_index([NumericField("amount")])
+    print("Index created successfully.")
+  except Exception as e:
+    print(e)
+
+  r.close()
 
   print(f"Average runtime of {num_queries:,} queries:")
+  runtimes = []
+  for _ in range(num_queries):
+    r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+    start_time = time.time()
+    req = aggregations.AggregateRequest("*").group_by([], reducers.avg('amount').alias("avg_amount"))
+    r.ft("paymentindex").aggregate(req)
+    runtimes.append(time.time() - start_time)
+  redis_avg_time = sum(runtimes) / len(runtimes)
+  print(f"  Average Runtime: {redis_avg_time:.5f} seconds in Redis")
+  return redis_avg_time
 
+
+def redis_aggregate_query (num_queries):
+  print(f"Average runtime of {num_queries:,} queries:")
   # Redis
   runtimes = []
   for _ in range(num_queries):
-    r = redis.StrictRedis(host='localhost', port=6379) 
+    r = redis.StrictRedis(host='localhost', port=6379)
     start_time = time.time()
-    payment_ids = r.keys('payment:*') # get keys first 
+    payment_ids = r.keys('payment:*') # get keys first
     pipe = r.pipeline()
     for payment_id in payment_ids:
         pipe.hget(payment_id, "amount")
@@ -23,25 +48,28 @@ def aggregate_query (num_queries):
     r.close()
   redis_avg_time = sum(runtimes) / len(runtimes)
   print(f"  Average Runtime: {redis_avg_time:.5f} seconds in Redis")
+  return redis_avg_time
 
+def sql_aggregate_query(num_queries):
   # SQLite
   runtimes = []
   for _ in range(num_queries):
-    conn = sqlite3.connect('../data/sakila.db')
+    conn = sqlite3.connect('/mnt/data/sakila.db')
     cursor = conn.cursor()
     start_time = time.time()
     cursor.execute("SELECT AVG(amount) FROM payment")
     sql_avg = cursor.fetchone()
     runtimes.append(time.time() - start_time)
     conn.close()
-  
   sql_avg_time = sum(runtimes) / len(runtimes)
   print(f"  Average Runtime: {sum(runtimes) / len(runtimes):.5f} seconds in SQLite")
-  return redis_avg_time, sql_avg_time
+  return sql_avg_time
 
 print()
 print("Redis vs SQLite")
 print("aggregate queries by key")
 print("===================\n")
-aggregate_query(100)
+redis_indexed_aggregate_query(10)
+# redis_aggregate_query(10)
+sql_aggregate_query(10)
 print()
