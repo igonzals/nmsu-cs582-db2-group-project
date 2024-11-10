@@ -8,11 +8,11 @@ Then, proceed with the following steps:
 
 1. Clone this Github project. You need authorization since it is a private repository:
 ```
-git clone nmsu-cs582-db2-group-project
+git clone https://github.com/igonzals/nmsu-cs582-db2-group-project.git
 ```
 2. Build Redis image (check you have Docker running first in your machine)
 ```
-cd docker-redis-sqlite
+cd docker-redis-sqlite-python
 docker build -t redis-sqlite-python .
 ```
 3. Run Redis (without persistance) container mounting the data shared folder:
