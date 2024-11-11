@@ -15,7 +15,12 @@ def redis_indexed_aggregate_query(num_queries):
     r.ft("paymentindex").create_index([NumericField("amount")])
     print("Index created successfully.")
   except Exception as e:
-    print(e)
+    if "Index already exists" in str(e):
+      # print("Index already exists")
+      a = 1
+    else:
+      print(f"An error occurred: {e}")
+      exit()
 
   r.close()
 
