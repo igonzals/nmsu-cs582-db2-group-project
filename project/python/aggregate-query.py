@@ -63,7 +63,7 @@ def sql_aggregate_query(num_queries):
     conn = sqlite3.connect('/mnt/data/sakila.db')
     cursor = conn.cursor()
     start_time = time.time()
-    cursor.execute("SELECT AVG(amount) FROM payment")
+    cursor.execute("SELECT *, AVG(amount) FROM payment group by amount")
     sql_avg = cursor.fetchone()
     runtimes.append(time.time() - start_time)
     conn.close()
