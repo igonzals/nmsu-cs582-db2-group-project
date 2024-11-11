@@ -1,8 +1,8 @@
 *.DS_Store
 *.zip, *.gz, *.tar.gz, *.rar, *.7z, *.dmg, *.iso
-*.log, *.sql, *.sqlite, *.sqlite3
-*.rdb, *.mwb
-*.log, *.tsv
+*.log
+*.rdb
+*.tsv
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
