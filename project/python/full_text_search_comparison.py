@@ -57,8 +57,8 @@ def measure_query_time(system, query_function, query_text, num_iterations):
         runtimes.append(duration)
     return sum(runtimes) / len(runtimes)
 
-# Test query time with increasing query counts 1 to 10000
-query_counts = [1, 10, 100, 1000, 10000]   
+# Test query time with increasing query counts 1 to 1000
+query_counts = [10, 100, 1000]   
 
 print("Testing Redis and SQLite query times with increasing iteration counts:\n")
 

@@ -46,7 +46,7 @@ print()
 print("Redis vs SQLite")
 print("Equi queries by key")
 print("===================\n")
-query_counts = [1, 10, 100, 1000, 10000]
+query_counts = [10, 100, 1000]
 for count in query_counts:
   queries_by_key(count)
 print()
