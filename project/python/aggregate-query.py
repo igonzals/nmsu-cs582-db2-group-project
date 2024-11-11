@@ -25,7 +25,7 @@ def redis_indexed_aggregate_query(num_queries):
   for _ in range(num_queries):
     r = redis.Redis(host='localhost', port=6379, decode_responses=True)
     start_time = time.time()
-    req = aggregations.AggregateRequest("@amount").group_by([], reducers.avg('amount').alias("avg_amount"))
+    req = aggregations.AggregateRequest("*").group_by([], reducers.avg('amount').alias("avg_amount"))
     r.ft("paymentindex").aggregate(req)
     runtimes.append(time.time() - start_time)
   redis_avg_time = sum(runtimes) / len(runtimes)
@@ -63,7 +63,7 @@ def sql_aggregate_query(num_queries):
     conn = sqlite3.connect('/mnt/data/sakila.db')
     cursor = conn.cursor()
     start_time = time.time()
-    cursor.execute("SELECT AVG(amount) FROM payment group by amount")
+    cursor.execute("SELECT AVG(amount) avg_amount FROM payment")
     sql_avg = cursor.fetchone()
     runtimes.append(time.time() - start_time)
     conn.close()
