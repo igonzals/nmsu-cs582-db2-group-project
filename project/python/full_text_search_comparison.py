@@ -44,18 +44,16 @@ def sqlite_full_text_search(query_text):
 
 # Function to run queries multiple times and calculate average time
 def measure_query_time(system, query_function, query_text, num_iterations):
-    # Get execution time in format yyyy-mmm-dd hh:mm:ss
-    execution_group_time = time.strftime("%Y-%b-%d %H:%M:%S")
-    
     runtimes = []
     for _ in range(num_iterations):
         start_time = time.time()
         query_function(query_text)
         duration = time.time() - start_time
-        with open("../data/runtimes.tsv", "a") as f:
-            f.write(f"{execution_group_time}\tTextSearch\t{system}\t{duration}\n")
         runtimes.append(duration)
     return sum(runtimes) / len(runtimes)
+
+ # Get execution time in format yyyy-mmm-dd hh:mm:ss
+execution_group_time = time.strftime("%Y-%b-%d %H:%M:%S")
 
 # Test query time with increasing query counts 1 to 1000
 query_counts = [10, 100, 1000]   
@@ -68,6 +66,9 @@ for count in query_counts:
     print(f"For {count} queries:")
     print(f"  Redis Average Query Time: {redis_time:.5f} seconds")
     print(f"  SQLite Average Query Time: {sqlite_time:.5f} seconds\n")
+    with open("../data/runtimes-group.tsv", "a") as f:
+        f.write(f"{execution_group_time}\tFull-text Search\tRedis\t{redis_time}\n")
+        f.write(f"{execution_group_time}\tFull-text Search\tSQLite\t{sqlite_time}\n")
 
 # Close SQLite connection
 conn.close()

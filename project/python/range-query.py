@@ -85,16 +85,14 @@ for count in query_counts:
     # Run Redis query query_counts times and calculate the average time
     redis_times = [time_redis_query() for _ in range(count)]
     avg_redis_time = sum(redis_times) / len(redis_times)
-    for duration in redis_times:
-        with open("../data/runtimes.tsv", "a") as f:
-            f.write(f"{execution_group_time}\tRange-query\tRedis\t{duration}\n")
     print(f"Average Redis Query Time ({count} queries): {avg_redis_time:.5f} seconds")
+    with open("../data/runtimes-group.tsv", "a") as f:
+        f.write(f"{execution_group_time}\tRange-query\tRedis\t{avg_redis_time}\n")
 
     # Run SQLite query query_counts times and calculate the average time
     sqlite_times = [time_sqlite_query() for _ in range(count)]
     avg_sqlite_time = sum(sqlite_times) / len(sqlite_times)
-    for duration in sqlite_times:
-        with open("../data/runtimes.tsv", "a") as f:
-            f.write(f"{execution_group_time}\tRange-query\tSQLite\t{duration}\n")
     print(f"Average SQLite Query Time ({count} queries): {avg_sqlite_time:.5f} seconds")
+    with open("../data/runtimes-group.tsv", "a") as f:
+        f.write(f"{execution_group_time}\tRange-query\tSQLite\t{avg_sqlite_time}\n")
 

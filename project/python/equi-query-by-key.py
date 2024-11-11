@@ -19,12 +19,12 @@ def queries_by_key (num_queries):
     start_time = time.time()
     first_name = r.hget("customer:" + str(customer_id), "first_name")
     end_time = time.time()
-    with open("../data/runtimes.tsv", "a") as f:
-      f.write(f"{execution_group_time}\tEqui-query\tRedis\t{duration}\n")
     duration = end_time - start_time
     runtimes.append(duration)
     r.close()
   print(f"  Average Runtime: {sum(runtimes) / len(runtimes):.5f} seconds in Redis")
+  with open("../data/runtimes-group.tsv", "a") as f:
+    f.write(f"{execution_group_time}\tEqui-query\tRedis\t{sum(runtimes) / len(runtimes)}\n")
 
   # SQLite
   runtimes = []
@@ -36,11 +36,11 @@ def queries_by_key (num_queries):
     first_name = cursor.fetchone()[0]
     end_time = time.time()
     duration = end_time - start_time
-    with open("../data/runtimes.tsv", "a") as f:
-      f.write(f"{execution_group_time}\tEqui-query\tSQLite\t{duration}\n")
     runtimes.append(duration)
     conn.close()
   print(f"  Average Runtime: {sum(runtimes) / len(runtimes):.5f} seconds in SQLite")
+  with open("../data/runtimes-group.tsv", "a") as f:
+    f.write(f"{execution_group_time}\tEqui-query\tSQLite\t{sum(runtimes) / len(runtimes)}\n")
 
 print()
 print("Redis vs SQLite")
