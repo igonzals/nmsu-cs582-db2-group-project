@@ -9,6 +9,9 @@ def queries_by_key (num_queries):
 
   customer_id = random.randint(1, 100)
 
+  # Get execution time in format yyyy-mmm-dd hh:mm:ss
+  execution_group_time = time.strftime("%Y-%b-%d %H:%M:%S")
+
   # Redis
   runtimes = []
   for i in range(1, num_queries):
@@ -20,6 +23,8 @@ def queries_by_key (num_queries):
     runtimes.append(duration)
     r.close()
   print(f"  Average Runtime: {sum(runtimes) / len(runtimes):.5f} seconds in Redis")
+  with open("../data/runtimes-group.tsv", "a") as f:
+    f.write(f"{execution_group_time}\tEqui-query\tRedis\t{sum(runtimes) / len(runtimes)}\n")
 
   # SQLite
   runtimes = []
@@ -34,10 +39,14 @@ def queries_by_key (num_queries):
     runtimes.append(duration)
     conn.close()
   print(f"  Average Runtime: {sum(runtimes) / len(runtimes):.5f} seconds in SQLite")
+  with open("../data/runtimes-group.tsv", "a") as f:
+    f.write(f"{execution_group_time}\tEqui-query\tSQLite\t{sum(runtimes) / len(runtimes)}\n")
 
 print()
 print("Redis vs SQLite")
 print("Equi queries by key")
 print("===================\n")
-queries_by_key(1000)
+query_counts = [10, 100, 1000]
+for count in query_counts:
+  queries_by_key(count)
 print()
