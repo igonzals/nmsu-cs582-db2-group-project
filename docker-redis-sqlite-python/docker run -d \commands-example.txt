@@ -1,5 +1,6 @@
 # To build and run the container as a service, execute the following commands:
 docker build -t redis-sqlite-python .
+
 docker run -d \
   --name redis-sqlite-container \
   -p 6379:6379 \
