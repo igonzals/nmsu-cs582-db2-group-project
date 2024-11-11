@@ -2,8 +2,6 @@ import redis
 import sqlite3
 import time
 from redis.commands.search.query import Query
-from redis.commands.search.field import NumericField
-from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 
 # Path to the SQLite database file
 db_path = "/mnt/data/sakila.db"
@@ -28,29 +26,9 @@ AND staff_id = 1;
 
 # Function to execute the Redis query and measure time
 def time_redis_query():
+    # Establish the Redis connection once
+    r = redis.StrictRedis(host='localhost', port=6379)
     
-    # Connect to Redis
-    r = redis.Redis(host='localhost', port=6379, decode_responses=True)
-
-    # Create index if it doesn't exist
-    try:
-        r.ft("rentalIndex").create_index(
-            [
-                NumericField("rental_id"),
-                NumericField("inventory_id"),
-                NumericField("customer_id"),
-                NumericField("staff_id")
-            ],
-            definition=IndexDefinition(prefix=["rental:"], index_type=IndexType.HASH)
-        )
-    except redis.exceptions.ResponseError as e:
-        if "Index already exists" in str(e):
-            # print("Index already exists")
-            a = 1
-        else:
-            print(f"An error occurred: {e}")
-            exit()
-
     # Measure only the query execution time
     start_time = time.time()
     query = Query(redis_query).return_fields("customer_id")
@@ -77,22 +55,14 @@ def time_sqlite_query():
     # print(end_time - start_time)
     return end_time - start_time
 
-# Get execution time in format yyyy-mmm-dd hh:mm:ss
-execution_group_time = time.strftime("%Y-%b-%d %H:%M:%S")
-query_counts = [10, 100, 1000]
+# Run Redis query 5 times and calculate the average time
+redis_times = [time_redis_query() for _ in range(5)]
+avg_redis_time = sum(redis_times) / len(redis_times)
 
-for count in query_counts:
-    # Run Redis query query_counts times and calculate the average time
-    redis_times = [time_redis_query() for _ in range(count)]
-    avg_redis_time = sum(redis_times) / len(redis_times)
-    print(f"Average Redis Query Time ({count} queries): {avg_redis_time:.5f} seconds")
-    with open("../data/runtimes-group.tsv", "a") as f:
-        f.write(f"{execution_group_time}\tRange-query\tRedis\t{avg_redis_time}\n")
+# Run SQLite query 5 times and calculate the average time
+sqlite_times = [time_sqlite_query() for _ in range(5)]
+avg_sqlite_time = sum(sqlite_times) / len(sqlite_times)
 
-    # Run SQLite query query_counts times and calculate the average time
-    sqlite_times = [time_sqlite_query() for _ in range(count)]
-    avg_sqlite_time = sum(sqlite_times) / len(sqlite_times)
-    print(f"Average SQLite Query Time ({count} queries): {avg_sqlite_time:.5f} seconds")
-    with open("../data/runtimes-group.tsv", "a") as f:
-        f.write(f"{execution_group_time}\tRange-query\tSQLite\t{avg_sqlite_time}\n")
-
+# Display the results
+print(f"Average Redis Query Time: {avg_redis_time:.5f} seconds")
+print(f"Average SQLite Query Time: {avg_sqlite_time:.5f} seconds")
