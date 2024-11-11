@@ -45,7 +45,8 @@ def time_redis_query():
         )
     except redis.exceptions.ResponseError as e:
         if "Index already exists" in str(e):
-            print("Index already exists")
+            # print("Index already exists")
+            a = 1
         else:
             print(f"An error occurred: {e}")
             exit()
