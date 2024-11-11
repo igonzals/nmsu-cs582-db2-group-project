@@ -40,7 +40,7 @@ def queries_by_key (num_queries):
     conn.close()
   print(f"  Average Runtime: {sum(runtimes) / len(runtimes):.5f} seconds in SQLite")
   with open("../data/runtimes-group.tsv", "a") as f:
-    f.write(f"{execution_group_time}\SQLite\tEquality\t{num_queries}\t{sum(runtimes) / len(runtimes):.5f}\n")
+    f.write(f"{execution_group_time}\tSQLite\tEquality\t{num_queries}\t{sum(runtimes) / len(runtimes):.5f}\n")
 
 print()
 print("Redis vs SQLite")
