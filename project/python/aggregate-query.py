@@ -7,6 +7,7 @@ from redis.commands.search.field import NumericField
 import redis.commands.search.reducers as reducers
 import redis.commands.search.aggregation as aggregations
 
+execution_group_time = time.strftime("%Y-%b-%d %H:%M:%S")
 
 def redis_indexed_aggregate_query(num_queries):
   r = redis.Redis(host='localhost', port=6379, decode_responses=True)
@@ -48,6 +49,8 @@ def redis_aggregate_query (num_queries):
     r.close()
   redis_avg_time = sum(runtimes) / len(runtimes)
   print(f"  Average Runtime: {redis_avg_time:.5f} seconds in Redis")
+  with open("../data/runtimes-group.tsv", "a") as f:
+    f.write(f"{execution_group_time}\tAggregation\tRedis\t{redis_avg_time}\n")
   return redis_avg_time
 
 def sql_aggregate_query(num_queries):
@@ -63,13 +66,17 @@ def sql_aggregate_query(num_queries):
     conn.close()
   sql_avg_time = sum(runtimes) / len(runtimes)
   print(f"  Average Runtime: {sum(runtimes) / len(runtimes):.5f} seconds in SQLite")
+  with open("../data/runtimes-group.tsv", "a") as f:
+    f.write(f"{execution_group_time}\tAggregation\tSQLite\t{sql_avg_time}\n")
   return sql_avg_time
 
 print()
 print("Redis vs SQLite")
 print("aggregate queries by key")
 print("===================\n")
-redis_indexed_aggregate_query(10)
-# redis_aggregate_query(10)
-sql_aggregate_query(10)
+query_counts = [10, 100, 1000]
+for count in query_counts:
+  redis_indexed_aggregate_query(count)
+  # redis_aggregate_query(count)
+  sql_aggregate_query(count)
 print()
